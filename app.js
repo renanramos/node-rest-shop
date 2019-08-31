@@ -2,12 +2,18 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const productsRoutes = require('./api/routes/products');
 const ordersRoutes = require('./api/routes/orders');
 
+mongoose.connect('mongodb+srv://' +
+    process.env.MONGO_ATLAS_USER +
+    ':' + process.env.MONGO_ATLAS_PW +
+    '@cluster0-oygmi.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true});
+    
 app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
@@ -29,7 +35,7 @@ app.use((req, res, next) => {
     next(error);
 })
 
-app.use((error,req, res, next) => {
+app.use((error, req, res, next) => {
     res.status(error.status || 500);
     res.json({
         error: {
